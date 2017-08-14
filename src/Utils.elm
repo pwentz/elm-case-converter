@@ -5,8 +5,8 @@ module Utils
         , isKebab
         , isSnake
         , isTitle
+        , mapFirst
         , mapWords
-        , onPrefix
         , replaceSeparators
         , splitOn
         , toTitleWithSeparator
@@ -22,8 +22,11 @@ splitBy f str =
             if (not << f) char then
                 words
                     |> List.head
-                    |> Maybe.map (\x -> x ++ String.fromChar char)
-                    |> Maybe.map (\x -> x :: List.drop 1 words)
+                    |> Maybe.map (\first -> first ++ String.fromChar char)
+                    |> Maybe.map
+                        (\updatedFirst ->
+                            updatedFirst :: List.drop 1 words
+                        )
                     |> Maybe.withDefault [ String.fromChar char ]
             else
                 String.fromChar char :: words
@@ -39,15 +42,18 @@ isKebab str =
         words =
             splitOn '-' str
     in
-    List.length words > 1 && List.all (\x -> String.toLower x == x) words
+    (List.length words > 1)
+        && List.all (\x -> String.toLower x == x) words
+
+
+hasTitleCasedWords : String -> Bool
+hasTitleCasedWords str =
+    List.length (splitBy Char.isUpper str) > 1
 
 
 isCamel : String -> Bool
 isCamel str =
     let
-        hasTitleCasedWords str =
-            List.length (splitBy Char.isUpper str) > 1
-
         isFirstCharLower str =
             String.uncons str
                 |> Maybe.map (Char.isLower << Tuple.first)
@@ -102,8 +108,8 @@ unconsBy f str =
         str
 
 
-onPrefix : (String -> String) -> String -> String
-onPrefix f str =
+mapFirst : (String -> String) -> String -> String
+mapFirst f str =
     let
         prefix =
             String.left 1 str
@@ -164,7 +170,7 @@ toTitleWithSeparator : Char -> String -> String
 toTitleWithSeparator separator =
     mapWords
         (splitOn separator
-            >> List.map (onPrefix String.toUpper)
+            >> List.map (mapFirst String.toUpper)
             >> String.concat
         )
 
