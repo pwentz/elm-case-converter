@@ -96,7 +96,9 @@ toSnake str =
             Utils.fromTitleWithSeparator '_' str
 
         Kebab str ->
-            Utils.replaceSeparators ( '-', '_' ) str
+            str
+                |> String.toLower
+                |> Utils.replaceAll ( '-', '_' )
 
         Snake str ->
             str
@@ -115,7 +117,9 @@ toKebab str =
             Utils.fromTitleWithSeparator '-' str
 
         Snake str ->
-            Utils.replaceSeparators ( '_', '-' ) str
+            str
+                |> String.toLower
+                |> Utils.replaceAll ( '_', '-' )
 
         Kebab str ->
             str

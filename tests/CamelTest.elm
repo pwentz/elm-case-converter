@@ -57,21 +57,11 @@ suite =
                             "some-ThingVery_strange"
                     in
                     Expect.equal unknownCase (toCamel unknownCase)
-            , test "it can convert multiple words with consistent casing" <|
+            , test "it cannot convert multiple words" <|
                 \_ ->
                     let
                         words =
                             "BlueCharlie RedFoxtrot TangoAlpha"
-
-                        expected =
-                            "blueCharlie redFoxtrot tangoAlpha"
-                    in
-                    Expect.equal expected (toCamel words)
-            , test "it canno convert multiple words with inconsistent casing" <|
-                \_ ->
-                    let
-                        words =
-                            "blue-charlie RedFoxtrot TANGO_ALPHA"
                     in
                     Expect.equal words (toCamel words)
             ]

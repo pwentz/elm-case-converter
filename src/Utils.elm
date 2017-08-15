@@ -7,12 +7,13 @@ module Utils
         , isTitle
         , mapFirst
         , mapWords
-        , replaceSeparators
+        , replaceAll
         , splitOn
         , toTitleWithSeparator
         )
 
 import Char
+import Regex
 
 
 splitBy : (Char -> Bool) -> String -> List String
@@ -39,11 +40,19 @@ splitBy f str =
 isKebab : String -> Bool
 isKebab str =
     let
-        words =
+        strictlyAlphanumeric str =
+            str
+                |> Regex.find Regex.All (Regex.regex "[^a-zA-Z0-9]")
+                |> List.filter (not << (==) "-" << .match)
+                |> List.isEmpty
+
+        isLowerCased str =
             splitOn '-' str
+                |> List.all (\x -> String.toLower x == x)
     in
-    (List.length words > 1)
-        && List.all (\x -> String.toLower x == x) words
+    String.contains "-" str
+        && isLowerCased str
+        && strictlyAlphanumeric str
 
 
 hasTitleCasedWords : String -> Bool
@@ -54,6 +63,11 @@ hasTitleCasedWords str =
 isCamel : String -> Bool
 isCamel str =
     let
+        strictlyAlphanumeric str =
+            Regex.contains
+                (Regex.regex "([^a-zA-Z0-9]|_)")
+                str
+
         isFirstCharLower str =
             String.uncons str
                 |> Maybe.map (Char.isLower << Tuple.first)
@@ -61,15 +75,16 @@ isCamel str =
     in
     hasTitleCasedWords str
         && isFirstCharLower str
-        && (not << String.contains "_") str
+        && (not << strictlyAlphanumeric) str
 
 
 isTitle : String -> Bool
 isTitle str =
     let
-        containsSpecialChars str =
-            String.contains "_" str
-                || String.contains "-" str
+        strictlyAlphanumeric str =
+            Regex.contains
+                (Regex.regex "([^a-zA-Z0-9]|_)")
+                str
 
         hasTitleCasedWords str =
             List.length (splitBy Char.isUpper str) > 1
@@ -81,17 +96,25 @@ isTitle str =
     in
     hasTitleCasedWords str
         && isFirstCharUpper str
-        && (not << containsSpecialChars) str
+        && (not << strictlyAlphanumeric) str
 
 
 isSnake : String -> Bool
 isSnake str =
     let
+        strictlyAlphanumeric str =
+            str
+                |> Regex.find Regex.All (Regex.regex "[^a-zA-Z0-9]")
+                |> List.filter (not << (==) "_" << .match)
+                |> List.isEmpty
+
         isMonocased x =
             (String.toUpper x == x)
                 || (String.toLower x == x)
     in
-    List.length (splitOn '_' str) > 1 && isMonocased str
+    String.contains "_" str
+        && isMonocased str
+        && strictlyAlphanumeric str
 
 
 splitOn : Char -> String -> List String
@@ -175,8 +198,7 @@ toTitleWithSeparator separator =
         )
 
 
-replaceSeparators : ( Char, Char ) -> String -> String
-replaceSeparators ( oldSep, newSep ) =
+replaceAll : ( Char, Char ) -> String -> String
+replaceAll ( oldSep, newSep ) =
     splitOn oldSep
-        >> List.map String.toLower
         >> String.join (String.fromChar newSep)
