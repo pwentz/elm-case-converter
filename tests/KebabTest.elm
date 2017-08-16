@@ -87,21 +87,11 @@ suite =
                             "someThing_Inconsistent"
                     in
                     Expect.equal unknownCase (toKebab unknownCase)
-            , test "it can convert multiple words with consistent casing" <|
+            , test "it cannot convert multiple words" <|
                 \_ ->
                     let
                         words =
                             "BlueCharlie RedFoxtrot TangoAlpha"
-
-                        expected =
-                            "blue-charlie red-foxtrot tango-alpha"
-                    in
-                    Expect.equal expected (toKebab words)
-            , test "it cannot convert multiple words with inconsistent casing" <|
-                \_ ->
-                    let
-                        words =
-                            "blue_charlie redFoxtrot TangoAlpha"
                     in
                     Expect.equal words (toKebab words)
             ]

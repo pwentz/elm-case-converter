@@ -40,15 +40,5 @@ suite =
                             "SimpleHttpRequest"
                     in
                     Expect.equal expected (toTitle snake)
-            , test "it can convert multiple words w/ consistent casing" <|
-                \_ ->
-                    let
-                        words =
-                            "redAlpha blueFoxtrot whiskyTango"
-
-                        expected =
-                            "RedAlpha BlueFoxtrot WhiskyTango"
-                    in
-                    Expect.equal expected (toTitle words)
             ]
         ]

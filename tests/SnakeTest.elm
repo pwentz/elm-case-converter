@@ -57,15 +57,12 @@ suite =
                             "SomeVery-strangeCasing"
                     in
                     Expect.equal word (toSnake word)
-            , test "it can convert multiple words w/ consistent casing" <|
+            , test "it cannot convert multiple words" <|
                 \_ ->
                     let
                         words =
                             "BlueCharlie RedFoxtrot WhiskeyAlpha"
-
-                        expected =
-                            "blue_charlie red_foxtrot whiskey_alpha"
                     in
-                    Expect.equal expected (toSnake words)
+                    Expect.equal words (toSnake words)
             ]
         ]
